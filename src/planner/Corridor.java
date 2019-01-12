@@ -13,10 +13,18 @@ package planner;
  * </p>
  */
 public class Corridor implements Comparable<Corridor> {
+    // Instance variables:
+    private int capacity;
+    private Location start;
+    private Location end;
 
-    // REMOVE THIS LINE AND INSERT YOUR INSTANCE VARIABLES HERE
 
-    // REMOVE THIS LINE AND INSERT YOUR CLASS INVARIANT HERE
+    /*
+       Class invariant:
+       maxCapacity >= 0 &&
+       start != null && end != null
+       start != end
+     */
 
     /**
      * Creates a new traffic corridor with the given start and end locations,
@@ -36,7 +44,15 @@ public class Corridor implements Comparable<Corridor> {
      *             is less than or equal to zero
      */
     public Corridor(Location start, Location end, int capacity) {
-        // REMOVE THIS LINE AND WRITE THIS METHOD
+        if((start == null) || (end == null)){
+            throw new NullPointerException("Locations cannot be null");
+        }
+        else if(capacity <= 0){
+            throw new IllegalArgumentException("Capacity must be larger than zero");
+        }
+        this.start = start;
+        this.end = end;
+        this.capacity = capacity;
     }
 
     /**
@@ -45,7 +61,7 @@ public class Corridor implements Comparable<Corridor> {
      * @return the start location
      */
     public Location getStart() {
-        return null; // REMOVE THIS LINE AND WRITE THIS METHOD
+        return start;
     }
 
     /**
@@ -54,7 +70,7 @@ public class Corridor implements Comparable<Corridor> {
      * @return the end location
      */
     public Location getEnd() {
-        return null; // REMOVE THIS LINE AND WRITE THIS METHOD
+        return end;
     }
 
     /**
@@ -63,7 +79,7 @@ public class Corridor implements Comparable<Corridor> {
      * @return the maximum capacity of this traffic corridor
      */
     public int getCapacity() {
-        return 0; // REMOVE THIS LINE AND WRITE THIS METHOD
+        return capacity;
     }
 
     /**
@@ -83,7 +99,8 @@ public class Corridor implements Comparable<Corridor> {
      */
     @Override
     public String toString() {
-        return null; // REMOVE THIS LINE AND WRITE THIS METHOD
+        return "Corridor " + start.toString() + " to " + end.toString() +
+                capacity;
     }
 
     /**
