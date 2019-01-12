@@ -81,5 +81,4 @@ public class Location implements Comparable<Location> {
     public int compareTo(Location other) {
         return name.compareTo(other.name);
     }
-
 }

@@ -1,5 +1,7 @@
 package planner;
 
+import java.util.Collection;
+
 /**
  * <p>
  * An immutable class representing a traffic corridor from a start location in
@@ -20,10 +22,10 @@ public class Corridor implements Comparable<Corridor> {
 
 
     /*
-       Class invariant:
-       maxCapacity >= 0 &&
-       start != null && end != null
-       start != end
+     * Class invariant:
+     * maxCapacity >= 0 &&
+     * start != null && end != null
+     * start != end
      */
 
     /**
@@ -49,6 +51,9 @@ public class Corridor implements Comparable<Corridor> {
         }
         else if(capacity <= 0){
             throw new IllegalArgumentException("Capacity must be larger than zero");
+        }
+        else if(start.equals(end)){
+            throw new IllegalArgumentException("Start and End corridors must be different");
         }
         this.start = start;
         this.end = end;
@@ -100,7 +105,7 @@ public class Corridor implements Comparable<Corridor> {
     @Override
     public String toString() {
         return "Corridor " + start.toString() + " to " + end.toString() +
-                capacity;
+            " (" + capacity + ")";
     }
 
     /**
@@ -119,12 +124,21 @@ public class Corridor implements Comparable<Corridor> {
      */
     @Override
     public boolean equals(Object object) {
-        return super.equals(object); // REMOVE THIS LINE AND WRITE THIS METHOD
+        if(!(object instanceof Corridor)){
+            return false;
+        }
+        Corridor other = (Corridor) object;
+        return (other.start == start) && (other.end == end) &&
+            (other.capacity == capacity);
     }
 
     @Override
     public int hashCode() {
-        return super.hashCode(); // REMOVE THIS LINE AND WRITE THIS METHOD
+        int result = 17;
+        result = (23 * result) + result;
+        result = (23 * result) + start.hashCode();
+        result = (23 * result) + end.hashCode();
+        return result;
     }
 
     /**
@@ -152,7 +166,16 @@ public class Corridor implements Comparable<Corridor> {
      */
     @Override
     public int compareTo(Corridor other) {
-        return 0; // REMOVE THIS LINE AND WRITE THIS METHOD
+        // Compare Start Corridors
+        if(start.compareTo(other.start) == 0){
+            // Equal Start Corridors - Compare End Corridors
+            if(end.compareTo(other.end) == 0){
+                // Equal End Corridors - Compare Capacities
+                return Integer.compare(capacity, other.capacity);
+            }
+            return end.compareTo(other.end); //
+        }
+        return start.compareTo(other.start);
     }
 
     /**
@@ -168,7 +191,12 @@ public class Corridor implements Comparable<Corridor> {
      * @return true if this class is internally consistent, and false otherwise.
      */
     public boolean checkInvariant() {
-        return false; // REMOVE THIS LINE AND WRITE THIS METHOD
+        if(capacity <= 0){
+            return false;
+        }
+        else if((start == null) || (end == null)){
+            return false;
+        }
+        return !start.equals(end);
     }
-
 }
