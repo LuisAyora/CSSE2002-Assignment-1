@@ -1,7 +1,6 @@
 package planner;
 
 import java.util.*;
-import java.util.function.BiConsumer;
 
 /**
  * <p>
@@ -268,9 +267,17 @@ public class Traffic {
         if(trafficCorridors.isEmpty()){
             return "";
         }
-        return sortedString(); // REMOVE THIS LINE AND WRITE THIS METHOD
+        return sortedString();
     }
 
+    /**
+     * <p>
+     *  Processes the output string for the toString method.
+     * </p>
+     *
+     * @return sortedString
+     *            the string that represents Traffic objects
+     */
     private String sortedString(){
         TreeMap<Corridor, Integer> sortedMap = new TreeMap<>(trafficCorridors);
         return generateString(sortedMap);
@@ -309,6 +316,6 @@ public class Traffic {
                 return false;
             }
         }
-        return true; // REMOVE THIS LINE AND WRITE THIS METHOD
+        return true;
     }
 }
