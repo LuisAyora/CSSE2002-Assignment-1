@@ -1,6 +1,7 @@
 package planner;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 
 /**
  * <p>
@@ -13,10 +14,18 @@ import java.util.*;
  * </p>
  */
 public class Traffic {
+    // Instance variables:
+    private HashMap<Corridor, Integer> trafficCorridors;
 
-    // REMOVE THIS LINE AND INSERT YOUR INSTANCE VARIABLES HERE
+    // Constants:
+    private final String LINE_SEPARATOR = System.getProperty(
+        "line.separator");
 
-    // REMOVE THIS LINE AND INSERT YOUR CLASS INVARIANT HERE
+    /*
+     * Class invariant:
+     * trafficCorridors != null &&
+     * getValue(Corridor) >= 0
+     */
 
     /**
      * <p>
@@ -29,7 +38,7 @@ public class Traffic {
      * </p>
      */
     public Traffic() {
-        // REMOVE THIS LINE AND WRITE THIS METHOD
+        trafficCorridors = new HashMap<>();
     }
 
     /**
@@ -51,7 +60,11 @@ public class Traffic {
      *             if initialTraffic is null
      */
     public Traffic(Traffic initialTraffic) {
-        // REMOVE THIS LINE AND WRITE THIS METHOD
+        if (initialTraffic == null){
+            throw new NullPointerException("Traffic parameter cannot be null");
+        }
+        trafficCorridors = new HashMap<>();
+        this.addTraffic(initialTraffic);
     }
 
     /**
@@ -73,7 +86,13 @@ public class Traffic {
      *             if the parameter corridor is null
      */
     public int getTraffic(Corridor corridor) {
-        return -1; // REMOVE THIS LINE AND WRITE THIS METHOD
+        if(corridor == null){
+            throw new NullPointerException("Object argument cannot be null");
+        }
+        else if(!trafficCorridors.containsKey(corridor)) {
+            return 0;
+        }
+        return trafficCorridors.get(corridor);
     }
 
     /**
@@ -84,7 +103,13 @@ public class Traffic {
      *         greater than zero
      */
     public Set<Corridor> getCorridorsWithTraffic() {
-        return null; // REMOVE THIS LINE AND WRITE THIS METHOD
+        Set<Corridor> corridorsWithTraffic = new HashSet<>();
+        for(Map.Entry<Corridor, Integer> entry : trafficCorridors.entrySet()){
+            if(entry.getValue() >= 0) {
+                corridorsWithTraffic.add(entry.getKey());
+            }
+        }
+        return corridorsWithTraffic;
     }
 
     /**
@@ -107,7 +132,23 @@ public class Traffic {
      *             if other is null
      */
     public boolean sameTraffic(Traffic other) {
-        return false; // REMOVE THIS LINE AND WRITE THIS METHOD
+        if(other == null){
+            throw new NullPointerException("Traffic parameter cannot be null.");
+        }
+        else if(other.trafficCorridors.size() != trafficCorridors.size()){
+            return false;
+        }
+        for(Map.Entry<Corridor, Integer> entry : other.trafficCorridors.entrySet()){
+            // Check if Corridors in other are contained in this:
+            if(!trafficCorridors.containsKey(entry.getKey())) {
+                return false;
+            }
+            // Check if the Traffic in each Corridor is the same for both:
+            else if(!entry.getValue().equals(trafficCorridors.get(entry.getKey()))){
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -135,7 +176,25 @@ public class Traffic {
      *             on the given corridor is negative (i.e. less than zero).
      */
     public void updateTraffic(Corridor corridor, int amount) {
-        // REMOVE THIS LINE AND WRITE THIS METHOD
+        if(corridor == null){
+            throw new NullPointerException("Corridor cannot be null");
+        }
+        // Check whether corridor exists in this:
+        if(!trafficCorridors.containsKey(corridor)){
+            if(amount < 0){
+                throw new InvalidTrafficException("Cannot have less than " +
+                  "zero traffic");
+            }
+            trafficCorridors.put(corridor, amount);
+        }
+        else {
+            if ((amount + trafficCorridors.get(corridor) < 0)) {
+                throw new InvalidTrafficException("Cannot make traffic less " +
+                  "than zero");
+            }
+            trafficCorridors.replace(corridor, trafficCorridors.get(corridor)
+                + amount);
+        }
     }
 
     /**
@@ -162,7 +221,13 @@ public class Traffic {
      *             if extraTraffic is null
      */
     public void addTraffic(Traffic extraTraffic) {
-        // REMOVE THIS LINE AND WRITE THIS METHOD
+        if(extraTraffic == null){
+            throw new NullPointerException("Traffic parameter cannot be null");
+        }
+        for(Map.Entry<Corridor, Integer> entry : extraTraffic.
+              trafficCorridors.entrySet()){
+            this.updateTraffic(entry.getKey(), entry.getValue());
+        }
     }
 
     /**
@@ -200,7 +265,26 @@ public class Traffic {
      */
     @Override
     public String toString() {
-        return null; // REMOVE THIS LINE AND WRITE THIS METHOD
+        if(trafficCorridors.isEmpty()){
+            return "";
+        }
+        return sortedString(); // REMOVE THIS LINE AND WRITE THIS METHOD
+    }
+
+    private String sortedString(){
+        TreeMap<Corridor, Integer> sortedMap = new TreeMap<>(trafficCorridors);
+        return generateString(sortedMap);
+    }
+
+    private String generateString(TreeMap<Corridor, Integer> sortedMap){
+        String outputString = "";
+        for(Map.Entry<Corridor, Integer> entry : sortedMap.entrySet()){
+            if(entry.getValue() > 0){
+                outputString = outputString.concat(entry.getKey().toString() + ": " +
+                  entry.getValue() + LINE_SEPARATOR);
+            }
+        }
+        return outputString;
     }
 
     /**
@@ -216,7 +300,15 @@ public class Traffic {
      * @return true if this class is internally consistent, and false otherwise.
      */
     public boolean checkInvariant() {
-        return false; // REMOVE THIS LINE AND WRITE THIS METHOD
+        if (trafficCorridors == null) {
+            return false;
+        }
+        for (Map.Entry<Corridor, Integer> entry :
+          trafficCorridors.entrySet()) {
+            if (entry.getValue() <= 0) {
+                return false;
+            }
+        }
+        return true; // REMOVE THIS LINE AND WRITE THIS METHOD
     }
-
 }

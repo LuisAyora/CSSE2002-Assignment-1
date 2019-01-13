@@ -38,11 +38,12 @@ public class TrafficTest {
         locations[5] = new Location("l4");
 
         // corridors to test with
-        corridors = new Corridor[4];
+        corridors = new Corridor[5];
         corridors[0] = new Corridor(locations[0], locations[1], 100);
         corridors[1] = new Corridor(locations[1], locations[2], 200);
         corridors[2] = new Corridor(locations[2], locations[3], 300);
         corridors[3] = new Corridor(locations[3], locations[4], 400);
+        corridors[4] = new Corridor(locations[4], locations[0], 500);
     }
 
     /**
@@ -80,22 +81,34 @@ public class TrafficTest {
         traffic.updateTraffic(corridors[0], 20);
         traffic.updateTraffic(corridors[1], -10);
 
+        Traffic traffic2 = new Traffic();
+        traffic2.updateTraffic(corridors[4], 0);
+        traffic2.updateTraffic(corridors[2], 50);
+        traffic2.updateTraffic(corridors[0], 100);
+
         // expected results
         Set<Corridor> expectedCorridorsWithTraffic = new HashSet<>();
         expectedCorridorsWithTraffic.add(corridors[0]);
         expectedCorridorsWithTraffic.add(corridors[1]);
         String expectedString = "Corridor l0 to l1 (100): 30" + LINE_SEPARATOR
-                + "Corridor l1 to l2 (200): 40" + LINE_SEPARATOR;
+            + "Corridor l1 to l2 (200): 40" + LINE_SEPARATOR;
+
+        String expectedString2 = "Corridor l0 to l1 (100): 100" + LINE_SEPARATOR
+            + "Corridor l2 to l3 (300): 50" + LINE_SEPARATOR;
 
         // check the traffic on some corridors
         Assert.assertEquals(30, traffic.getTraffic(corridors[0]));
         Assert.assertEquals(40, traffic.getTraffic(corridors[1]));
         Assert.assertEquals(0, traffic.getTraffic(corridors[2]));
+
         // check the corridors with traffic
         Assert.assertEquals(expectedCorridorsWithTraffic, traffic
-                .getCorridorsWithTraffic());
+            .getCorridorsWithTraffic());
+
         // check the string representation
         Assert.assertEquals(expectedString, traffic.toString());
+        Assert.assertEquals(expectedString2, traffic2.toString());
+
         // check that the class invariant holds
         Assert.assertTrue(traffic.checkInvariant());
     }
@@ -119,7 +132,12 @@ public class TrafficTest {
     public void testUpdateTrafficInvalidTrafficException() {
         // the Traffic object under test
         Traffic traffic = new Traffic();
+        Traffic traffic2 = new Traffic();
+
+        // Cases that throw exceptions:
         traffic.updateTraffic(corridors[0], -10);
+        traffic2.updateTraffic(corridors[0], 20);
+        traffic2.updateTraffic(corridors[0], -50);
     }
 
     /**
@@ -219,19 +237,24 @@ public class TrafficTest {
     /** Basic test for the sameTraffic method **/
     @Test
     public void testSameTrafficMethod() {
-        // the Traffic object under test
+        // The Traffic objects under test:
         Traffic traffic = new Traffic();
         traffic.updateTraffic(corridors[0], 10);
         traffic.updateTraffic(corridors[1], 20);
 
-        // the Traffic object to compare
+
+        // The Traffic object to compare:
         Traffic other = new Traffic();
         other.updateTraffic(corridors[0], 10);
+        Traffic other2 = new Traffic();
+        other2.updateTraffic(corridors[0], 10);
+        other2.updateTraffic(corridors[1], 50);
 
-        // check that the objects are not currently the same
+        // Check that the objects are not currently the same:
         Assert.assertFalse(traffic.sameTraffic(other));
+        Assert.assertFalse(traffic.sameTraffic(other2));
 
-        // update other so that they are now the same and check
+        // Update other so that they are now the same and check:
         other.updateTraffic(corridors[1], 20);
         Assert.assertTrue(traffic.sameTraffic(other));
     }
@@ -242,12 +265,12 @@ public class TrafficTest {
      */
     @Test(expected = NullPointerException.class)
     public void testSameTrafficMethodNullParameter() {
-        // the Traffic object under test
+        // The Traffic object under test:
         Traffic traffic = new Traffic();
         traffic.updateTraffic(corridors[0], 10);
         traffic.updateTraffic(corridors[1], 20);
 
+        // Cases that throw exceptions:
         traffic.sameTraffic(null);
     }
-
 }
