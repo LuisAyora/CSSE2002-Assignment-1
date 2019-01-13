@@ -82,7 +82,7 @@ public class Traffic {
      *            returned
      * @return the amount of traffic on the given corridor
      * @throws NullPointerException
-     *             if the parameter corridor is null
+     *            if the parameter corridor is null
      */
     public int getTraffic(Corridor corridor) {
         if(corridor == null){

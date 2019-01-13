@@ -128,8 +128,8 @@ public class Corridor implements Comparable<Corridor> {
             return false;
         }
         Corridor other = (Corridor) object;
-        return (other.start == start) && (other.end == end) &&
-            (other.capacity == capacity);
+        return (start.equals(other.start)) && (end.equals(other.end)) &&
+            (capacity == other.capacity);
     }
 
     @Override

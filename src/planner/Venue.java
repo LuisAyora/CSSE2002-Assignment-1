@@ -1,5 +1,7 @@
 package planner;
 
+import java.util.Map;
+
 /**
  * <p>
  * An immutable class representing a venue in the municipality.
@@ -28,7 +30,10 @@ package planner;
  */
 public class Venue {
 
-    // REMOVE THIS LINE AND INSERT YOUR INSTANCE VARIABLES HERE
+    // Instance variables:
+    private String name;
+    private int capacity;
+    private Traffic capacityTraffic;
 
     // REMOVE THIS LINE AND INSERT YOUR CLASS INVARIANT HERE
 
@@ -56,7 +61,43 @@ public class Venue {
      *             the venue.)
      */
     public Venue(String name, int capacity, Traffic capacityTraffic) {
-        // REMOVE THIS LINE AND WRITE THIS METHOD
+        if(capacityTraffic == null){
+            throw new NullPointerException("Traffic argument cannot be null");
+        }
+        else if(capacity <= 0){
+            throw new IllegalArgumentException("Capacity must be a positive " +
+              "integer");
+        }
+        else if(moreTrafficThanCapacity(capacityTraffic, capacity)){
+            throw new InvalidTrafficException("Traffic larger than venue " +
+              "capacity");
+        }
+        this.name = name;
+        this.capacity = capacity;
+        this.capacityTraffic = new Traffic();
+        this.capacityTraffic.addTraffic(capacityTraffic);
+    }
+
+    /**
+     * <p>
+     *  This method determines if any of the Traffic Corridors generates
+     *  more traffic on the Venue than the Venue's capacity.
+     * </p>
+     *
+     * @param traffic
+     *            The generated Traffic that shows traffic in each Corridor.
+     * @param capacity
+     *            The capacity of a Venue to host an event.
+     * @return true if the any of the Corridors generates more traffic than
+     *         the Venue can hold.
+     */
+    private boolean moreTrafficThanCapacity(Traffic traffic, int capacity){
+        for(Corridor c : traffic.getCorridorsWithTraffic()){
+            if(traffic.getTraffic(c) > capacity){
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -65,7 +106,7 @@ public class Venue {
      * @return the name of the venue
      */
     public String getName() {
-        return null; // REMOVE THIS LINE AND WRITE THIS METHOD
+        return name;
     }
 
     /**
@@ -74,7 +115,7 @@ public class Venue {
      * @return the capacity of the venue
      */
     public int getCapacity() {
-        return -1; // REMOVE THIS LINE AND WRITE THIS METHOD
+        return capacity;
     }
 
     /**
@@ -86,10 +127,13 @@ public class Venue {
      * @return true iff the capacity of the venue is greater than or equal to
      *         the size of the event.
      * @throws NullPointerException
-     *             if event is null
+     *             if event is null.
      */
     public boolean canHost(Event event) {
-        return false; // REMOVE THIS LINE AND WRITE THIS METHOD
+        if(event == null){
+            throw new NullPointerException("Event parameter cannot be null");
+        }
+        return capacity >= event.getSize();
     }
 
     /**
@@ -160,12 +204,25 @@ public class Venue {
      */
     @Override
     public boolean equals(Object object) {
-        return super.equals(object); // REMOVE THIS LINE AND WRITE THIS METHOD
+        if(!(object instanceof Venue)){
+            return false;
+        }
+        Venue other = (Venue) object;
+        return (name.equals(other.name)) && (capacity == other.capacity) &&
+            (capacityTraffic.sameTraffic(other.capacityTraffic)); // REMOVE THIS LINE AND WRITE THIS METHOD
     }
 
     @Override
     public int hashCode() {
-        return super.hashCode(); // REMOVE THIS LINE AND WRITE THIS METHOD
+        int result = 61;
+        result = (5 * result) + result;
+        result = (5 * result) + name.hashCode();
+        for(Corridor c : capacityTraffic.getCorridorsWithTraffic()) {
+            result = (5 * result) + c.hashCode();
+            result = (5 * result) + result;
+        }
+        return result;
+        //return super.hashCode(); // REMOVE THIS LINE AND WRITE THIS METHOD
     }
 
     /**
@@ -183,5 +240,4 @@ public class Venue {
     public boolean checkInvariant() {
         return false; // REMOVE THIS LINE AND WRITE THIS METHOD
     }
-
 }
