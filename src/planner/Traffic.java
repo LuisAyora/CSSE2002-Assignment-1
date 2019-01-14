@@ -104,7 +104,7 @@ public class Traffic {
     public Set<Corridor> getCorridorsWithTraffic() {
         Set<Corridor> corridorsWithTraffic = new HashSet<>();
         for(Map.Entry<Corridor, Integer> entry : trafficCorridors.entrySet()){
-            if(entry.getValue() >= 0) {
+            if(entry.getValue() > 0) {
                 corridorsWithTraffic.add(entry.getKey());
             }
         }
@@ -134,16 +134,9 @@ public class Traffic {
         if(other == null){
             throw new NullPointerException("Traffic parameter cannot be null.");
         }
-        else if(other.trafficCorridors.size() != trafficCorridors.size()){
-            return false;
-        }
-        for(Map.Entry<Corridor, Integer> entry : other.trafficCorridors.entrySet()){
-            // Check if Corridors in other are contained in this:
-            if(!trafficCorridors.containsKey(entry.getKey())) {
-                return false;
-            }
+        for(Map.Entry<Corridor, Integer> entry : trafficCorridors.entrySet()){
             // Check if the Traffic in each Corridor is the same for both:
-            else if(!entry.getValue().equals(trafficCorridors.get(entry.getKey()))){
+            if(!entry.getValue().equals(other.trafficCorridors.get(entry.getKey()))){
                 return false;
             }
         }
@@ -191,8 +184,8 @@ public class Traffic {
                 throw new InvalidTrafficException("Cannot make traffic less " +
                   "than zero");
             }
-            trafficCorridors.replace(corridor, trafficCorridors.get(corridor)
-                + amount);
+            int newTraffic = trafficCorridors.get(corridor) + amount;
+            trafficCorridors.replace(corridor, newTraffic);
         }
     }
 
@@ -312,7 +305,7 @@ public class Traffic {
         }
         for (Map.Entry<Corridor, Integer> entry :
           trafficCorridors.entrySet()) {
-            if (entry.getValue() <= 0) {
+            if (entry.getValue() < 0) {
                 return false;
             }
         }

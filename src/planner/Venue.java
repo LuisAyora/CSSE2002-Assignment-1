@@ -73,6 +73,9 @@ public class Venue {
         if(capacityTraffic == null){
             throw new NullPointerException("Traffic argument cannot be null");
         }
+        if(name == null){
+            throw new NullPointerException("Name argument cannot be null");
+        }
         else if(capacity <= 0){
             throw new IllegalArgumentException("Capacity must be a positive " +
               "integer");
