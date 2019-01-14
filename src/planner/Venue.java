@@ -35,7 +35,16 @@ public class Venue {
     private int capacity;
     private Traffic capacityTraffic;
 
+    // Constant values:
+    private final String LINE_SEPARATOR = System.getProperty("line.separator");
+
     // REMOVE THIS LINE AND INSERT YOUR CLASS INVARIANT HERE
+    /*
+     * Class invariant:
+     * capacity > 0 && name != null &&
+     * capacityTraffic != null &&
+     * for each Corridor c in capacityTraffic: c.capacity <= this.capacity
+     */
 
     /**
      * Creates a new venue with the given name, and capacity, that generates the
@@ -164,7 +173,38 @@ public class Venue {
      *             if the size of the event exceeds the capacity of the venue
      */
     public Traffic getTraffic(Event event) {
-        return null; // REMOVE THIS LINE AND WRITE THIS METHOD
+        if(event == null){
+            throw new NullPointerException("Event argument cannot be null");
+        }
+        else if(event.getSize() > this.capacity){
+            throw new IllegalArgumentException("Event size cannot be larger " +
+              "than Venue's capacity");
+        }
+        Traffic eventTraffic = new Traffic();
+        for (Corridor venueCorridor : capacityTraffic.getCorridorsWithTraffic()){
+            eventTraffic.updateTraffic(venueCorridor, eventTrafficForCorridor(
+                venueCorridor, event.getSize()));
+        }
+        return eventTraffic; // REMOVE THIS LINE AND WRITE THIS METHOD
+    }
+
+    /**
+     * <p>
+     * Calculates the value of traffic generated in a corridor by for an event of
+     * size eventSize as required in the getTraffic method.
+     * </p>
+     *
+     * @param venueCorridor
+     *            The corridor to calculate traffic for.
+     * @param eventSize
+     *            The size of the event that will generate the traffic.
+     * @return the value of traffic in a corridor for the event.
+     */
+    private int eventTrafficForCorridor(Corridor venueCorridor, int eventSize){
+        int eventCorridorTraffic;
+        eventCorridorTraffic = (eventSize * capacityTraffic.getTraffic(
+            venueCorridor))/this.capacity;
+        return eventCorridorTraffic;
     }
 
     /**
@@ -183,7 +223,8 @@ public class Venue {
      */
     @Override
     public String toString() {
-        return null; // REMOVE THIS LINE AND WRITE THIS METHOD
+        return name + " (" + capacity + ")" + LINE_SEPARATOR +
+            capacityTraffic.toString();
     }
 
     /**
@@ -238,6 +279,12 @@ public class Venue {
      * @return true if this class is internally consistent, and false otherwise.
      */
     public boolean checkInvariant() {
-        return false; // REMOVE THIS LINE AND WRITE THIS METHOD
+        if(name == null){
+            return false;
+        }
+        else if(capacity <= 0){
+            return false;
+        }
+        return !moreTrafficThanCapacity(capacityTraffic, capacity);
     }
 }

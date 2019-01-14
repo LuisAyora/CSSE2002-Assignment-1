@@ -128,8 +128,8 @@ public class Corridor implements Comparable<Corridor> {
             return false;
         }
         Corridor other = (Corridor) object;
-        return (start.equals(other.start)) && (end.equals(other.end)) &&
-            (capacity == other.capacity);
+        return (this.start.equals(other.start)) && (this.end.equals(other.end))
+            && (this.capacity == other.capacity);
     }
 
     @Override
@@ -167,15 +167,15 @@ public class Corridor implements Comparable<Corridor> {
     @Override
     public int compareTo(Corridor other) {
         // Compare Start Corridors
-        if(start.compareTo(other.start) == 0){
+        if(this.start.compareTo(other.start) == 0){
             // Equal Start Corridors - Compare End Corridors
-            if(end.compareTo(other.end) == 0){
+            if(this.end.compareTo(other.end) == 0){
                 // Equal End Corridors - Compare Capacities
-                return Integer.compare(capacity, other.capacity);
+                return Integer.compare(this.capacity, other.capacity);
             }
-            return end.compareTo(other.end); //
+            return this.end.compareTo(other.end); //
         }
-        return start.compareTo(other.start);
+        return this.start.compareTo(other.start);
     }
 
     /**
